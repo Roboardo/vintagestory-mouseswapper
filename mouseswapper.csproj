@@ -51,7 +51,7 @@
       <Private>False</Private>
     </Reference>
     <Reference Include="VintagestoryLib">
-      <HintPath>..\..\..\..\AppData\Roaming\Vintagestory\VintagestoryLib.dll</HintPath>
+      <HintPath>$(AppData)\Vintagestory\VintagestoryLib.dll</HintPath>
     </Reference>
     <Reference Include="VSSurvivalMod">
       <HintPath>$(AppData)\Vintagestory\Mods\VSSurvivalMod.dll</HintPath>
@@ -78,7 +78,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="assets\" />
-    <Folder Include="Fakes\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
