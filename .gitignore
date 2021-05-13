@@ -1,2 +1,6 @@
 *.pdb
 mouseswapper.dll
+.vs
+obj/
+*.csproj.user
+*.dll
