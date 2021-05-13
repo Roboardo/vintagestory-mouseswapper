@@ -1,9 +1,9 @@
 {
   "type": "code",
   "modid": "mouseswapper",
-  "name": "mouseswapper",
-  "author": "Nexrem",
-  "description": "To be added",
+  "name": "MouseSwapper",
+  "author": "A Lizard",
+  "description": "",
   "version": "1.0.0",
   "dependency": {
     "game": ""
