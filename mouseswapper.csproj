@@ -66,14 +66,14 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="modinfo.json" />
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="src\MouseSwapper.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="assets\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="modinfo.json" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

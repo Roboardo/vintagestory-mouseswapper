@@ -30,9 +30,14 @@ using Vintagestory.API.Common;
 //      Build Number
 //      Revision
 //
-[assembly: AssemblyVersion("1.0.0.0")]
-[assembly: AssemblyFileVersion("1.0.0.0")]
+[assembly: AssemblyVersion("1.0")]
+[assembly: AssemblyFileVersion("1.0")]
 
 [assembly: ModDependency("game")]
-[assembly: ModInfo("MouseSwapper", "mouseswapper", Version = "1.0.0", Authors = new string[] { "A Lizard" },
-        Website = "", Description = "", RequiredOnClient = true)]
+[assembly: ModInfo(
+    "MouseSwapper", "mouseswapper",
+    Version = "1.0.0",
+    Authors = new string[] { "Nexrem", "Lyrthras" },
+    Description = "Swap left and right mouse buttons as well as their corresponding prompts",
+    Website = "https://github.com/SexualReptilians/vintagestory-mouseswapper",
+    Side = "client")]
