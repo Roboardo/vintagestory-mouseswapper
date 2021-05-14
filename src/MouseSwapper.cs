@@ -7,23 +7,42 @@ namespace MouseSwapper
 {
     class MouseSwapper : ModSystem
     {
-        public override void StartClientSide(ICoreClientAPI api)
+        // Prevent double patching and unpatching
+        static bool mousePatched = false;
+        public override void Start(ICoreAPI api)
         {
-            Patcher.DoPatching();
-            System.Diagnostics.Debug.WriteLine("I like 4 limbed dragons");
+            if (!mousePatched)
+            {
+                mousePatched = true;
+                System.Diagnostics.Debug.WriteLine("MouseSwapper: Patching methods");
+                HarmonyPatcher.Patch();
+            }
+        }
+
+        public override void Dispose()
+        {
+            if (mousePatched)
+            {
+                mousePatched = false;
+                System.Diagnostics.Debug.WriteLine("MouseSwapper: Unpatching methods");
+                HarmonyPatcher.Unpatch();
+            }
         }
     }
 
 
-    public class Patcher
+    public class HarmonyPatcher
     {
-        // make sure DoPatching() is called at start either by
-        // the mod loader or by your injector
-
-        public static void DoPatching()
+        private static string harmonyId = "vsmods.patch.mouseswapper";
+        private static Harmony harmony = new Harmony(harmonyId);
+        public static void Patch()
         {
-            var harmony = new Harmony("vsmods.patch.mouseswapper");
             harmony.PatchAll();
+        }
+
+        public static void Unpatch()
+        {
+            harmony.UnpatchAll(harmonyId);
         }
     }
 
