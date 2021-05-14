@@ -5,7 +5,7 @@
   "authors": [ "Nexrem", "Lyrthras" ],
   "description": "Swap left and right mouse buttons as well as their corresponding prompts",
   "website": "https://github.com/SexualReptilians/vintagestory-mouseswapper",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "side": "Client",
   "dependency": {
     "game": ""
