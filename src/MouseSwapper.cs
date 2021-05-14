@@ -60,6 +60,9 @@ namespace MouseSwapper
 
         static void Postfix(MouseEvent args, int __state, ref MouseButtonState ___InWorldMouseState)
         {
+            // Make sure to drop handled events
+            if (args.Handled) return;
+
             // Revert mouse state to the way it was before the call
             ___InWorldMouseState.Left = Convert.ToBoolean(__state & 1);
             ___InWorldMouseState.Right = Convert.ToBoolean(__state & 2);
