@@ -46,26 +46,43 @@ namespace MouseSwapper
         }
     }
 
+    struct StateKeeper
+    {
+        public EnumMouseButton Button;
+        public bool Left;
+        public bool Right;
+    }
 
     [HarmonyPatch(typeof(ClientMain))]
     [HarmonyPatch("OnMouseDown")]
     class MouseDownPatch
     {
-        static void Prefix(MouseEvent args, out MouseEvent __state)
+        static void Prefix(out StateKeeper __state, ref MouseButtonState ___InWorldMouseState)
         {
-            __state = args;
+            // Save mouse state before original method call
+            __state = new StateKeeper
+            {
+                Left = ___InWorldMouseState.Left,
+                Right = ___InWorldMouseState.Right,
+            };
         }
 
-        static void Postfix(MouseEvent __state, ref MouseButtonState ___InWorldMouseState)
+        static void Postfix(MouseEvent args, StateKeeper __state, ref MouseButtonState ___InWorldMouseState)
         {
-            ___InWorldMouseState.Left = false;
-            ___InWorldMouseState.Right = false;
-            
-            if (__state.Button == EnumMouseButton.Left)
-                ___InWorldMouseState.Right = true;
+            // Revert mouse state to the way it was before the call
+            ___InWorldMouseState.Right = __state.Right;
+            ___InWorldMouseState.Left = __state.Left;
 
-            if (__state.Button == EnumMouseButton.Right)
-                ___InWorldMouseState.Left = true;
+            // Flip mouse keys
+            switch (args.Button)
+            {
+                case EnumMouseButton.Left:
+                    ___InWorldMouseState.Right = true;
+                    break;
+                case EnumMouseButton.Right:
+                    ___InWorldMouseState.Left = true;
+                    break;
+            }
         }
     }
 
@@ -74,32 +91,60 @@ namespace MouseSwapper
     [HarmonyPatch("OnMouseUp")]
     class MouseUpPatch
     {
-        struct StateKeeper {
-            public EnumMouseButton Button;
-            public bool Left;
-            public bool Right;
-        }
-
-        static void Prefix(MouseEvent args, out StateKeeper __state, ref MouseButtonState ___InWorldMouseState)
+        static void Prefix(out StateKeeper __state, ref MouseButtonState ___InWorldMouseState)
         {
+            // Save mouse state before original method call
             __state = new StateKeeper
             {
-                Button = args.Button, 
                 Left = ___InWorldMouseState.Left, 
                 Right = ___InWorldMouseState.Right,
             };
         }
 
-        static void Postfix(StateKeeper __state, ref MouseButtonState ___InWorldMouseState)
+        static void Postfix(MouseEvent args, StateKeeper __state, ref MouseButtonState ___InWorldMouseState)
         {
+            // Revert mouse state to the way it was before the call
             ___InWorldMouseState.Right = __state.Right;
             ___InWorldMouseState.Left = __state.Left;
 
-            if (__state.Button == EnumMouseButton.Left)
-                ___InWorldMouseState.Right = false;
+            // Flip mouse keys
+            switch (args.Button)
+            {
+                case EnumMouseButton.Left:
+                    ___InWorldMouseState.Right = false;
+                    break;
+                case EnumMouseButton.Right:
+                    ___InWorldMouseState.Left = false;
+                    break;
+            }
+        }
+    }
 
-            if (__state.Button == EnumMouseButton.Right)
-                ___InWorldMouseState.Left = false;
+    [HarmonyPatch(typeof(DrawWorldInteractionUtil))]
+    [HarmonyPatch("drawHelp")]
+    class DrawHelpPatch
+    {
+        static void Prefix(ref WorldInteraction wi, out EnumMouseButton __state)
+        {
+            // Save initial state (because the draw call can happen with the same WorldInterraction multiple times)
+            __state = wi.MouseButton;
+
+            // Switch mouse buttons
+            switch (wi.MouseButton)
+            {
+                case EnumMouseButton.Left:
+                    wi.MouseButton = EnumMouseButton.Right;
+                    break;
+                case EnumMouseButton.Right:
+                    wi.MouseButton = EnumMouseButton.Left;
+                    break;
+            }
+        }
+
+        static void Postfix(ref WorldInteraction wi, EnumMouseButton __state)
+        {
+            // Restore original state
+            wi.MouseButton = __state;
         }
     }
 }
