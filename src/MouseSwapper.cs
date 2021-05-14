@@ -1,7 +1,8 @@
 ﻿using Vintagestory.API.Client;
 using Vintagestory.API.Common;
-using Vintagestory.Client.NoObf;
+using System;
 using HarmonyLib;
+using Vintagestory.Client.NoObf;
 
 namespace MouseSwapper
 {
@@ -46,32 +47,22 @@ namespace MouseSwapper
         }
     }
 
-    struct StateKeeper
-    {
-        public EnumMouseButton Button;
-        public bool Left;
-        public bool Right;
-    }
-
     [HarmonyPatch(typeof(ClientMain))]
     [HarmonyPatch("OnMouseDown")]
     class MouseDownPatch
     {
-        static void Prefix(out StateKeeper __state, ref MouseButtonState ___InWorldMouseState)
+        static void Prefix(out int __state, ref MouseButtonState ___InWorldMouseState)
         {
             // Save mouse state before original method call
-            __state = new StateKeeper
-            {
-                Left = ___InWorldMouseState.Left,
-                Right = ___InWorldMouseState.Right,
-            };
+            __state = (1 & Convert.ToInt16(___InWorldMouseState.Left)) |
+                      (2 & Convert.ToInt16(___InWorldMouseState.Right));
         }
 
-        static void Postfix(MouseEvent args, StateKeeper __state, ref MouseButtonState ___InWorldMouseState)
+        static void Postfix(MouseEvent args, int __state, ref MouseButtonState ___InWorldMouseState)
         {
             // Revert mouse state to the way it was before the call
-            ___InWorldMouseState.Right = __state.Right;
-            ___InWorldMouseState.Left = __state.Left;
+            ___InWorldMouseState.Left = Convert.ToBoolean(__state & 1);
+            ___InWorldMouseState.Right = Convert.ToBoolean(__state & 2);
 
             // Flip mouse keys
             switch (args.Button)
@@ -91,21 +82,18 @@ namespace MouseSwapper
     [HarmonyPatch("OnMouseUp")]
     class MouseUpPatch
     {
-        static void Prefix(out StateKeeper __state, ref MouseButtonState ___InWorldMouseState)
+        static void Prefix(out int __state, ref MouseButtonState ___InWorldMouseState)
         {
             // Save mouse state before original method call
-            __state = new StateKeeper
-            {
-                Left = ___InWorldMouseState.Left, 
-                Right = ___InWorldMouseState.Right,
-            };
+            __state = (1 & Convert.ToInt16(___InWorldMouseState.Left)) |
+                      (2 & Convert.ToInt16(___InWorldMouseState.Right));
         }
 
-        static void Postfix(MouseEvent args, StateKeeper __state, ref MouseButtonState ___InWorldMouseState)
+        static void Postfix(MouseEvent args, int __state, ref MouseButtonState ___InWorldMouseState)
         {
             // Revert mouse state to the way it was before the call
-            ___InWorldMouseState.Right = __state.Right;
-            ___InWorldMouseState.Left = __state.Left;
+            ___InWorldMouseState.Left = Convert.ToBoolean(__state & 1);
+            ___InWorldMouseState.Right = Convert.ToBoolean(__state & 2);
 
             // Flip mouse keys
             switch (args.Button)
