@@ -48,7 +48,7 @@ namespace MouseSwapper
     }
 
     [HarmonyPatch(typeof(ClientMain))]
-    [HarmonyPatch("OnMouseDown")]
+    [HarmonyPatch("OnMouseDownRaw")]
     class MouseDownPatch
     {
         static void Prefix(out int __state, ref MouseButtonState ___InWorldMouseState)
@@ -82,7 +82,7 @@ namespace MouseSwapper
 
 
     [HarmonyPatch(typeof(ClientMain))]
-    [HarmonyPatch("OnMouseUp")]
+    [HarmonyPatch("OnMouseUpRaw")]
     class MouseUpPatch
     {
         static void Prefix(out int __state, ref MouseButtonState ___InWorldMouseState)
